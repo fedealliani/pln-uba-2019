@@ -16,67 +16,89 @@ from tagging.ancora import SimpleAncoraCorpusReader
 class POSStats:
     """Several statistics for a POS tagged corpus.
     """
-
     def __init__(self, tagged_sents):
         """
         tagged_sents -- corpus (list/iterable/generator of tagged sentences)
         """
-        # WORK HERE!!
-        # COLLECT REQUIRED STATISTICS INTO DICTIONARIES.
+        # Convert nltk.collections.LazyMap to list
+        self.corpus = list(tagged_sents)
+        # Set number of tokens to 0
+        self.numberOfTokens = 0
+        # Create Dictionary Token -> Number of appearances
+        self.tokenToNumberOfAppearances = defaultdict(lambda:0)
+       
+        # Create Dictionary Token -> [Tag1,Tag2,...]
+        self.tokenToTags = defaultdict(lambda:set([]))
+        
+        # Create Dictionary Tag -> Number of appearances
+        self.tagsToNumberOfAppearances = defaultdict(lambda:0)
+        
+        # Create Dictionary Tag -> {Token1:Number of Appearances,Token2:Number of Appearances,..}
+        self.tagToTokens_ToNumberOfAppearances = defaultdict(lambda:defaultdict(lambda: 0))
+        
+
+        # Go through the sentences to count the words
+        for phrase in self.corpus:
+            for token, tag in phrase:
+                self.tokenToTags[token].add(tag)
+                self.tagToTokens_ToNumberOfAppearances[tag][token] +=1
+                self.tokenToNumberOfAppearances[token] +=1
+                self.numberOfTokens +=1
+                self.tagsToNumberOfAppearances[tag] +=1
 
     def sent_count(self):
         """Total number of sentences."""
-        # WORK HERE!!
+        return len(self.corpus)
 
     def token_count(self):
         """Total number of tokens."""
-        # WORK HERE!!
-
+        return self.numberOfTokens
+                
     def words(self):
         """Vocabulary (set of word types)."""
-        # WORK HERE!!
+        return list(self.tokenToNumberOfAppearances.keys())
 
     def word_count(self):
         """Vocabulary size."""
-        # WORK HERE!!
+        return len(self.words())
 
     def word_freq(self, w):
-        """Frequency of word w."""
-        # WORK HERE!!
+        """Frequency of word w."""                    
+        return self.tokenToNumberOfAppearances[w]
 
     def unambiguous_words(self):
         """List of words with only one observed POS tag."""
-        # WORK HERE!!
+        return [token for token, tags in self.tokenToTags.items() if len(tags)==1]
 
     def ambiguous_words(self, n):
         """List of words with n different observed POS tags.
 
         n -- number of tags.
-        """
-        # WORK HERE!!
+        """      
+        return [token for token, tags in self.tokenToTags.items() if len(tags)==n]
 
     def tags(self):
         """POS Tagset."""
-        # WORK HERE!!
+        return list(self.tagsToNumberOfAppearances.keys())
 
     def tag_count(self):
         """POS tagset size."""
-        # WORK HERE!!
+        return len(self.tags())
 
     def tag_freq(self, t):
         """Frequency of tag t."""
-        # WORK HERE!!
+        return self.tagsToNumberOfAppearances[t]
 
     def tag_word_dict(self, t):
         """Dictionary of words and their counts for tag t."""
-        return dict(self._tcount[t])
+        return dict(self.tagToTokens_ToNumberOfAppearances[t])
 
 
 if __name__ == '__main__':
     opts = docopt(__doc__)
 
-    # load the data
-    corpus = SimpleAncoraCorpusReader(opts['-c'])
+    # load the data with <path> because with -c not working
+    corpus = SimpleAncoraCorpusReader(opts['<path>'])
     sents = corpus.tagged_sents()
 
     # compute the statistics
@@ -90,6 +112,7 @@ if __name__ == '__main__':
     word_count = stats.word_count()
     print('words: {}'.format(word_count))
     print('tags: {}'.format(stats.tag_count()))
+    print('unambiguous words:{}'.format(len(stats.unambiguous_words())))
     print('')
 
     print('Most Frequent POS Tags')
@@ -110,7 +133,7 @@ if __name__ == '__main__':
     for n in range(1, 10):
         words = list(stats.ambiguous_words(n))
         m = len(words)
-
+        
         # most frequent words:
         sorted_words = sorted(words, key=lambda w: -stats.word_freq(w))
         top = sorted_words[:5]

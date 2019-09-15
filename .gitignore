@@ -1,0 +1,11 @@
+ancora-3.0.1es/
+.vscode/
+.DS_Store
+pln_uba_2019.egg-info/dependency_links.txt
+tagging/ancora.pyc
+tagging/__pycache__/ancora.cpython-37.pyc
+tagging/__pycache__/__init__.cpython-37.pyc
+tagging/__init__.pyc
+pln_uba_2019.egg-info/top_level.txt
+pln_uba_2019.egg-info/SOURCES.txt
+pln_uba_2019.egg-info/PKG-INFO
