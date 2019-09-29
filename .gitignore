@@ -9,3 +9,7 @@ tagging/__init__.pyc
 pln_uba_2019.egg-info/top_level.txt
 pln_uba_2019.egg-info/SOURCES.txt
 pln_uba_2019.egg-info/PKG-INFO
+classifier
+stats.cpython-37.pyc
+classifier.cpython-37.pyc
+baseline.cpython-37.pyc
