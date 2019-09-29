@@ -61,6 +61,7 @@ class BaselineTagger:
             return self._default_tag
         
         tagsForW = list(self.stats.tokenToTags[w])
+        tagsForW = sorted(tagsForW)
         tagMoreFrequent = tagsForW[0]
         numberOfAppearancesForTagMoreFrequent = self.stats.tagsToNumberOfAppearances[tagMoreFrequent]
         for tag in tagsForW:
